@@ -53,13 +53,13 @@ class Hasher:
                             sha256.update(data)
 
         my_hash = sha256.digest()
-        print("SHA256 of file\""+ str(file_path)+ "\" was:\n {0}".format((my_hash.hex())))
+        print("\nSHA256 of file\""+ str(file_path)+ "\" was:\n {0}".format((my_hash.hex())))
         #print("SHA256 of file\""+ str(file_path)+ "\" was: {0}".format(str(bytes.fromhex(my_hash))))
         return my_hash
     
     def __hash_files(self):
         # hashes both files and returns the hashes
-        return self._hash_file(self.fileA_path),self._hash_file(self.fileB_path)
+        return self.__hash_file(self.fileA_path),self.__hash_file(self.fileB_path)
     
     def __read_saved_hashes(self):
         # reads the saved hashes from the files and returns them
@@ -73,10 +73,10 @@ class Hasher:
         # hashes the files and saves the hashes in the active_hashes directory
         if AorBorAB=="A" or AorBorAB=="AB" :
             with open(self.hash_fileA_path, "wb") as bin_file:
-                bin_file.write(self._hash_file(self.fileA_path))
+                bin_file.write(self.__hash_file(self.fileA_path))
         if AorBorAB=="B" or AorBorAB=="AB":
             with open(self.hash_fileB_path, "wb") as bin_file:
-                bin_file.write(self._hash_file(self.fileB_path))
+                bin_file.write(self.__hash_file(self.fileB_path))
     
 
     
@@ -84,8 +84,8 @@ class Hasher:
         # returns a string showing which files were changed
         # "-" if none, "A" if fileA changed, "b" for fileB
         # and "AB" if both of them changed 
-        current_hash_a,current_hash_b = self._hash_files()
-        saved_hash_a  , saved_hash_b  = self._read_saved_hashes()
+        current_hash_a,current_hash_b = self.__hash_files()
+        saved_hash_a  , saved_hash_b  = self.__read_saved_hashes()
         
         a_changed=(current_hash_a != saved_hash_a)
         b_changed=(current_hash_b != saved_hash_b)
@@ -110,8 +110,9 @@ class Hasher:
 if __name__ == "__main__":
     print("Starting synchronization...")
     vc=Hasher(Path(__file__).parent.parent / "TEST1.xlsx", Path(__file__).parent.parent / "TEST2.xlsx")
-    vc._hash_file(vc.fileA_path)
-    vc._hash_file(vc.fileB_path)
+    vc.hash_and_save("AB")
+    vc.__hash_file(vc.fileA_path)
+    vc.__hash_file(vc.fileB_path)
     vc.compare_files()
 
     
