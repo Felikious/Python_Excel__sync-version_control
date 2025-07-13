@@ -44,8 +44,29 @@ class Backup_Manager:
             self._create_backup(self.fileB_path, self.dir_backed_fileB)
         print("Backup completed successfully.")
     
-    def restore_file(self, AorBorAB):
-        return 0 
+    
+    def _get_most_recent_backup(self, backup_dir):
+        """Returns most recent backup file in directory or None if no backups exist"""
+        backups = list(backup_dir.glob("*"))
+        return max(backups, key=os.path.getmtime, default=None)
+    
+    
+    def restore_to_most_recent_backup(self, AorBorAB):
+
+        if AorBorAB == "A" or AorBorAB == "AB":
+            recent_backup = self._get_most_recent_backup(self.dir_backed_fileA)
+            shutil.copy2(recent_backup, self.fileA_path)
+            print(f"Restored fileA from {recent_backup.name}")
+            
+        if AorBorAB == "B" or AorBorAB == "AB":
+            recent_backup = self._get_most_recent_backup(self.dir_backed_fileB)
+            shutil.copy2(recent_backup, self.fileB_path)
+            print(f"Restored fileB from {recent_backup.name}")
+
+        print("Restore completed successfully.")
+
+
+        
 
 
 
