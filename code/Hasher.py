@@ -26,6 +26,7 @@ class Hasher:
 
 
     def __init__(self, fileA_path, fileB_path):
+        """Initialize the Hasher with paths to two files"""
         self.fileA_path = fileA_path
         self.fileB_path = fileB_path
 

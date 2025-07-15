@@ -4,41 +4,154 @@ from datetime import datetime
 from pathlib import Path
 
 
+
+"""TODO ADD READING OF LOG FILES AND BACKUPS AND RESTORING FROM THEM"""
+
 class LogManager():
-
-    class LogData():
+    """A class to manage logging of messages to a file.
+    It creates a log file in a directory called "logs" in the same directory as this file.
+    The log file is timestamped and saved in the "logs" directory."""  
         
-        def __init__(self,start_timestamp,end_timestamp, file_name):
-            self.start_timestamp=start_timestamp
-            self.end_timestamp=end_timestamp
-            self.file_name=file_name
-
-
     def __init__(self):
-        """Initialize the LogWriter with paths to two files"""
+        """Does not take any arguments."""
+
         
         self.code_dir = Path(__file__).parent
-        self.logs =""
-        self.started=False
-        self.
-
+        self.log_started=False
+        self.hanging_backup=False
         self.dir_log = self.code_dir/"logs"
+        self.hanging_add = False
         os.makedirs(self.dir_log, exist_ok=True)
 
 
-    def add(self, message):
-        __add_to_log(message)    
+    def create_log(self, AorBorABorNone=None):
+        """Create a log file if it does not exist"""
+        if self.log_started:
+            print("Log already created.")
+            return
+        self.__create_log()
+        self.__write_file_status(AorBorABorNone)
+        self.log_started = True
+        self.hanging_backup = False
+        self.hanging_add = False
+        print("Log created successfully.")
 
-    def start(self):
+    def log_backup_start(self, AorBorAB):
+        """Start a backup operation and log it"""
+        if not self.log_started:
+            print("Log not created yet. Please create a log first.")
+            return
+        if self.hanging_backup:
+            print("Backup already started.")
+            return
+        self.__log_backup_start(AorBorAB)
+        self.hanging_backup = True
+        print("Backup started successfully.")
+
+    def log_backup_end(self):
+        """End a backup operation and log it"""
+        if not self.hanging_backup or not self.log_started:
+            print("No backup or log operation started.")
+            return
+        self.__log_backup_end()
+        self.hanging_backup = False
+        print("Backup ended successfully.")
+
+    def add_start(self, file, row, column, oldvalue, newvalue):
+        """Start an add operation and log it"""
+        if not self.log_started:
+            print("Log not created yet. Please create a log first.")
+            return
+        if self.hanging_backup:
+            print("Hanging backup operation already exists. Please close it before starting a new one.")
+            return
+        if self.hanging_add:
+            print("Hanging add operation already exists. Please close it before starting a new one.")
+            return
+        
+        self.__add_start(file, row, column, oldvalue, newvalue)
+        self.hanging_add = True
+        print("Add operation started successfully.")
+
+    def add_close(self):
+        """End an add operation and log it"""
+        if not self.hanging_add or not self.log_started or not self.hanging_backup:
+            print("No add operation started.")
+            return
+        self.__add_close()
+        self.hanging_add = False
+        print("Add operation ended successfully.")
+
+    def close_log(self):
+        """Close the log file"""
+        if not self.log_started:
+            print("Log not created yet. Please create a log first.")
+            return
+        if self.hanging_backup or self.hanging_add:
+            print("Please close all ongoing operations before closing the log.")
+            return
+        self.__close_log()
+        self.log_started = False
+        print("Log closed successfully.")
+
+
+
+
+
+
+
+
+
+
+
+    def __create_log(self):
+        """Create a timestamped log file"""
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        backup_filename="logs_of_{t}".format(t=timestamp)        
-        backup_path = backup_path / backup_filename
-        shutil.copy2(file_path, backup_path)
-        return backup_path
-    
-    def write_and_end(self):
-        return None
-    
-    def read_log(self):
-        return None
-    
+        log_filename = "log_{t}.txt".format(t=timestamp)
+        self.log_file = self.dir_log / log_filename
+        with open(self.log_file, 'w') as f:
+            f.write("Log started at {t}\n".format(t=timestamp))
+
+    def __write_file_status(self, AorBorABorNone):
+        """Write the status of the files to the log file"""
+        with open(self.log_file, 'a') as f:
+            if AorBorABorNone == "A":
+                f.write("Changes detected at file A.\n")
+            elif AorBorABorNone == "B":
+                f.write("Changes detected at file B.\n")
+            elif AorBorABorNone == "AB":
+                f.write("Changes detected at both files A and B.\n")
+            else:
+                f.write("No changes were detected in any file.\n")
+
+
+    def __log_backup_start(self, AorBorAB):
+        """Write a header to the log file"""
+        with open(self.log_file, 'a') as f:
+            if AorBorAB=="A" or AorBorAB=="B":
+                f.write("Backup operation for: {} ...".format(AorBorAB))
+            elif AorBorAB=="AB":
+                f.write("Backup operation for both files A and B ...")
+
+    def __log_backup_end(self):
+        """Write a footer to the log file"""
+        with open(self.log_file, 'a') as f:
+            f.write(" Done.\n")
+
+    def __add_start(self, file, row, column, oldvalue, newvalue):
+        with open(self.log_file, 'a') as f:
+            f.write("\nAdding edit to file: {}\n".format(file))
+            f.write("Row: {}, Column: {}\n".format(row, column))
+            f.write("Old Value: {}\n".format(oldvalue))
+            f.write("New Value: {}\n".format(newvalue))
+                
+    def __add_close(self):
+        with open(self.log_file, 'a') as f:
+            f.write("Done\n")
+
+    def __close_log(self):
+        """Write a footer to the log file"""
+        with open(self.log_file, 'a') as f:
+            f.write("Log ended at {t}\n".format(t=datetime.now().strftime("%Y-%m-%d_%H-%M-%S")))
+
+
