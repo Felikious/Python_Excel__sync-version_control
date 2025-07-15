@@ -19,6 +19,7 @@ from collections import defaultdict
 
 
 class Excel_Version_Control:
+    
     def __init__(self, file1_path, file2_path, key_columns):
 
         self.file1_path = file1_path
@@ -91,12 +92,6 @@ class Excel_Version_Control:
         
     def sync_files(self):
         """Main synchronization method with detailed change logging"""
-        # Create backups before making changes
-        backup1 = self._create_backup(self.file1_path)
-        backup2 = self._create_backup(self.file2_path)
-        backup_vc = self._create_backup(self.vc_path)
-        self._log_change("SYSTEM", "ALL", f"Created backups:\n- {backup1}\n- {backup2}\n- {backup_vc}")
-        
         # Load data
         df1 = pd.read_excel(self.file1_path, engine='openpyxl')
         df2 = pd.read_excel(self.file2_path, engine='openpyxl')

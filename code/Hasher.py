@@ -93,7 +93,7 @@ class Hasher:
 
         if   ((not a_changed) and (not b_changed)):
             print("all same")
-            return "-"
+            return None
         elif ((a_changed)and (not b_changed)):
             print("file A changed")
             return "A"

@@ -46,7 +46,7 @@ class LogManager():
             return
         self.__log_backup_start(AorBorAB)
         self.hanging_backup = True
-        print("Backup started successfully.")
+        print("Logged backup start for: {}".format(AorBorAB))
 
     def log_backup_end(self):
         """End a backup operation and log it"""
@@ -55,7 +55,7 @@ class LogManager():
             return
         self.__log_backup_end()
         self.hanging_backup = False
-        print("Backup ended successfully.")
+        print("Logged backup end")
 
     def add_start(self, file, row, column, oldvalue, newvalue):
         """Start an add operation and log it"""
@@ -94,16 +94,12 @@ class LogManager():
         self.log_started = False
         print("Log closed successfully.")
 
-
-
-
-
-
-
-
-
-
-
+    def log_hash_update(self, file, old_hash, new_hash):
+        """Log a hash update for a file""" 
+        print("Feature not implemented yet.")
+        # This method can be implemented to log hash updates for files.
+        # It will mostly be used by humans to check  how the program functions.
+ 
     def __create_log(self):
         """Create a timestamped log file"""
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
