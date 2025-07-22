@@ -7,7 +7,7 @@ from pathlib import Path
 
 """TODO ADD READING OF LOG FILES AND BACKUPS AND RESTORING FROM THEM"""
 
-class LogManager():
+class BackupLogManager():
     """A class to manage logging of messages to a file.
     It creates a log file in a directory called "logs" in the same directory as this file.
     The log file is timestamped and saved in the "logs" directory."""  
@@ -151,3 +151,61 @@ class LogManager():
             f.write("Log ended at {t}\n".format(t=datetime.now().strftime("%Y-%m-%d_%H-%M-%S")))
 
 
+class BackupLogManager():
+    """A class to manage logging of messages to a file.
+    It creates a log file in a directory called "logs" in the same directory as this file.
+    The log file is timestamped and saved in the "logs" directory."""  
+        
+    def __init__(self,dir_backup):
+        """Does not take any arguments."""
+        self.code_dir = Path(__file__).parent
+        self.log_started = False
+        self.hanging_backup = False
+        self.dir_log = dir_backup
+        self.dir_log_file = dir_backup / "backup_log.txt"
+        os.makedirs(self.dir_log_file, exist_ok=True)
+
+    def _logging_start(self):
+        """Create a timestamped log query"""
+        if self.log_started or self.hanging_backup:
+            print("Log already started or backup operation is in progress.")
+            return -1
+        with open(self.dir_log_file, 'a') as f:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            f.write("Log started at {t}\n".format(t=timestamp))
+        self.log_started = True
+
+    def _log_file_status(self, AorBorABorNone):
+        """Write the status of the files to the log file"""
+        with open(self.dir_log_file, 'a') as f:
+            if AorBorABorNone == "A":
+                f.write("Changes detected at file A.\n")
+            elif AorBorABorNone == "B":
+                f.write("Changes detected at file B.\n")
+            elif AorBorABorNone == "AB":
+                f.write("Changes detected at both files A and B.\n")
+            else:
+                f.write("No changes were detected in any file.\n")
+
+
+    def _log_backup_start(self, AorBorAB):
+        """Write a header to the log file"""
+        with open(self.dir_log_file, 'a') as f:
+            if AorBorAB == "A" or AorBorAB == "B":
+                f.write("Backup operation for: {} ...".format(AorBorAB))
+            else:
+                f.write("Backup operation for both files A and B ...")
+            
+
+    def _log_backup_end(self):
+        """Write a footer to the log file"""
+        with open(self.dir_log_file, 'a') as f:
+            f.write(" Done.\n")
+
+    def _logging_end(self):
+        """Write a footer to the log file"""
+        with open(self.dir_log_file, 'a') as f:
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            f.write("Log ended successfully at {t}\n".format(t=timestamp))
+        self.log_started = False
+   
