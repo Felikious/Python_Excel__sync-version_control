@@ -238,7 +238,7 @@ class Excel_Version_Control:
     def print_changes(self):
         """Print all changes made during synchronization"""
         print("\n" + "="*80)
-        print("PETHEROS SYNCHRONIZATION REPORT")
+        print("SYNCHRONIZATION REPORT")
         print("="*80)
         
         for i, change in enumerate(self.change_log, 1):
@@ -254,7 +254,7 @@ class Excel_Version_Control:
         """Generate a detailed synchronization report"""
         report = []
         report.append("="*80)
-        report.append("PETHEROS SYNCHRONIZATION REPORT")
+        report.append("SYNCHRONIZATION REPORT")
         report.append("="*80)
         
         for i, change in enumerate(self.change_log, 1):

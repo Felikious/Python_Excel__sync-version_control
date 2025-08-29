@@ -17,6 +17,7 @@ def demo(mng):
 
 
 v_demo=True
+
 if v_demo:
     path_file_A = Path(__file__).parent.parent / "File_A_10.xlsx"
     path_file_B = Path(__file__).parent.parent / "File_B_10.xlsx"
@@ -34,7 +35,6 @@ if __name__ == "__main__":
 
     #Check for changed files
     changes_in = mng.start_log_and_compare()
-    
 
     # If user changed file A, backup file B,   since file B is the one i will be working on
     # If user changed file B, backup file A,   same logic
@@ -55,11 +55,3 @@ if __name__ == "__main__":
 
 
     mng.close_log()
-
-
-
-    
-    
-
-
-
